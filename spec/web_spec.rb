@@ -34,11 +34,11 @@ describe "the sinatra app" do
   context "when receiving a POST with event_type email_failed" do
     it "delivers the warnings and responds with status ok" do
       allow(ENV).to receive(:[]).with("CUSTOMER_IO_CLIENT_IDS").and_return("1")
-      allow(ENV).to receive(:[]).with("CUSTOMER_IO_SITE_ID").and_return("1")
-      allow(ENV).to receive(:[]).with("CUSTOMER_IO_API_KEY").and_return("1")
+      allow(ENV).to receive(:[]).with("CUSTOMER_IO_SITE_ID").and_return("asdf")
+      allow(ENV).to receive(:[]).with("CUSTOMER_IO_API_KEY").and_return("asdf")
 
-      expect_any_instance_of(Customerio::Client).to receive(:track)
-      params = { event_type: "email_failed" }
+      expect_any_instance_of(Customerio::Client).to receive(:track).with(1, "mail_delivery_failed", { failed_customerio_campaign: "deposit_expired" })
+      params = { event_type: "email_failed", data: { "campaign_name": "deposit_expired"} }
       post_as_json("/", params)
 
       expect(last_response.status).to eq(200)

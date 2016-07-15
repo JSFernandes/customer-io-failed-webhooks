@@ -5,9 +5,9 @@ require "customerio"
 
 Dotenv.load
 
-def deliver_warnings
+def deliver_warnings(failed_customerio_campaign)
   mailing_ids.each do |id|
-    customerio_client.track(id, "mail_delivery_failed")
+    customerio_client.track(id, "mail_delivery_failed", :failed_customerio_campaign => failed_customerio_campaign)
   end
 end
 
@@ -24,7 +24,10 @@ post "/" do
     parsed_params = JSON.parse(request.body.read.to_s)
     event_type = parsed_params["event_type"]
 
-    deliver_warnings if event_type == "email_failed"
+    if event_type == "email_failed"
+      failed_customerio_campaign = parsed_params["data"]["campaign_name"]
+      deliver_warnings(failed_customerio_campaign)
+    end
 
     status 200
   rescue JSON::ParserError
