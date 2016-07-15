@@ -19,10 +19,6 @@ def mailing_ids
   @mailing_ids ||= ENV["CUSTOMER_IO_CLIENT_IDS"].split(" ").map(&:to_i)
 end
 
-get "/" do
-  "Hello, world"
-end
-
 post "/" do
   begin
     parsed_params = JSON.parse(request.body.read.to_s)

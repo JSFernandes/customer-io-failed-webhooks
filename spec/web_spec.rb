@@ -16,11 +16,6 @@ describe "the sinatra app" do
     allow_any_instance_of(Customerio::Client).to receive(:track)
   end
 
-  it "says hello world" do
-    get "/"
-    expect(last_response.body).to eq("Hello, world")
-  end
-
   context "when receiving a POST without JSON" do
     it "responds with status ok" do
       post "/", event_type: "email_drafted"
