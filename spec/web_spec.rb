@@ -12,6 +12,10 @@ describe "the sinatra app" do
     post path, params.to_json, "CONTENT_TYPE" => "application/json", "ACCEPT" => "application/json"
   end
 
+  before do
+    allow_any_instance_of(Customerio::Client).to receive(:track)
+  end
+
   it "says hello world" do
     get "/"
     expect(last_response.body).to eq("Hello, world")
@@ -33,12 +37,16 @@ describe "the sinatra app" do
   end
 
   context "when receiving a POST with event_type email_failed" do
-    it "responds with JSON" do
+    it "delivers the warnings and responds with status ok" do
+      allow(ENV).to receive(:[]).with("CUSTOMER_IO_CLIENT_IDS").and_return("1")
+      allow(ENV).to receive(:[]).with("CUSTOMER_IO_SITE_ID").and_return("1")
+      allow(ENV).to receive(:[]).with("CUSTOMER_IO_API_KEY").and_return("1")
+
+      expect_any_instance_of(Customerio::Client).to receive(:track)
       params = { event_type: "email_failed" }
       post_as_json("/", params)
-      response_body = JSON.parse(last_response.body)
+
       expect(last_response.status).to eq(200)
-      expect(response_body).to eq("notified" => "true")
     end
   end
 end

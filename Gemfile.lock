@@ -3,8 +3,12 @@ GEM
   specs:
     ast (2.3.0)
     coderay (1.1.1)
+    customerio (1.0.0)
+      multi_json (~> 1.0)
     diff-lcs (1.2.5)
+    dotenv (2.1.1)
     method_source (0.8.2)
+    multi_json (1.12.1)
     parser (2.3.1.2)
       ast (~> 2.2)
     powerpack (0.1.1)
@@ -50,6 +54,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  customerio (~> 1.0.0)
+  dotenv (~> 2.1.1)
   pry (~> 0.9.12.6)
   rack-test (~> 0.6.3)
   rspec (~> 3.5.0)
