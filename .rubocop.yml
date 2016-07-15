@@ -12,3 +12,6 @@
 # SupportedStyles: single_quotes, double_quotes
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Metrics/LineLength:
+  Max: 120
