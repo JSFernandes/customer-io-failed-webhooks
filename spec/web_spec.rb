@@ -33,15 +33,22 @@ describe "the sinatra app" do
 
   context "when receiving a POST with event_type email_failed" do
     it "delivers the warnings and responds with status ok" do
-      allow(ENV).to receive(:[]).with("CUSTOMER_IO_CLIENT_IDS").and_return("1")
-      allow(ENV).to receive(:[]).with("CUSTOMER_IO_SITE_ID").and_return("asdf")
-      allow(ENV).to receive(:[]).with("CUSTOMER_IO_API_KEY").and_return("asdf")
+      allow(ENV).to receive(:[]).with("SLACK_WEBHOOK_URL").and_return("www.slack.com")
+      allow(ENV).to receive(:[]).with("ENVIRONMENT").and_return("production")
+      allow(ENV).to receive(:[]).with("SLACK_USERNAME").and_return("Customerio Bot")
+      allow(Net::HTTP).to receive(:post_form){ Net::HTTPSuccess.new(nil, nil, nil) }
 
-      expect_any_instance_of(Customerio::Client).to receive(:track).with(1, "mail_delivery_failed", { failed_customerio_campaign: "deposit_expired" })
       params = { event_type: "email_failed", data: { "campaign_name": "deposit_expired"} }
       post_as_json("/", params)
 
+      message = "Failed to create email `deposit_expired` in the \"production\" environment due to a template problem. Please check it out as others may be affected."
+      expected_payload = {
+        username: "Customerio Bot",
+        text: message
+      }
+
       expect(last_response.status).to eq(200)
+      expect(Net::HTTP).to have_received(:post_form).with(URI("www.slack.com"), "payload" => expected_payload.to_json)
     end
   end
 end

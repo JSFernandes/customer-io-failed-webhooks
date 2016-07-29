@@ -5,18 +5,25 @@ require "customerio"
 
 Dotenv.load
 
+def slack_url
+  @slack_url ||= ENV["SLACK_WEBHOOK_URL"]
+end
+
+def customerio_environment
+  @customerio_environment ||= ENV["ENVIRONMENT"]
+end
+
+def customerio_username
+  @customerio_username ||= ENV["SLACK_USERNAME"]
+end
+
 def deliver_warnings(failed_customerio_campaign)
-  mailing_ids.each do |id|
-    customerio_client.track(id, "mail_delivery_failed", :failed_customerio_campaign => failed_customerio_campaign)
-  end
-end
-
-def customerio_client
-  @client ||= Customerio::Client.new(ENV["CUSTOMER_IO_SITE_ID"], ENV["CUSTOMER_IO_API_KEY"])
-end
-
-def mailing_ids
-  @mailing_ids ||= ENV["CUSTOMER_IO_CLIENT_IDS"].split(" ").map(&:to_i)
+  message = "Failed to create email `#{failed_customerio_campaign}` in the \"#{customerio_environment}\" environment due to a template problem. Please check it out as others may be affected."
+  params = {
+    username: customerio_username,
+    text: message
+  }
+  Net::HTTP.post_form(URI(slack_url), "payload" => params.to_json)
 end
 
 post "/" do
