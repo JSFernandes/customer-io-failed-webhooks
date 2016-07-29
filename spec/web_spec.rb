@@ -36,12 +36,14 @@ describe "the sinatra app" do
       allow(ENV).to receive(:[]).with("SLACK_WEBHOOK_URL").and_return("www.slack.com")
       allow(ENV).to receive(:[]).with("ENVIRONMENT").and_return("production")
       allow(ENV).to receive(:[]).with("SLACK_USERNAME").and_return("Customerio Bot")
-      allow(Net::HTTP).to receive(:post_form){ Net::HTTPSuccess.new(nil, nil, nil) }
+      allow(Net::HTTP).to receive(:post_form) { Net::HTTPSuccess.new(nil, nil, nil) }
 
-      params = { event_type: "email_failed", data: { "campaign_name": "deposit_expired"} }
+      params = { event_type: "email_failed", data: { "campaign_name": "deposit_expired" } }
       post_as_json("/", params)
 
-      message = "Failed to create email `deposit_expired` in the \"production\" environment due to a template problem. Please check it out as others may be affected."
+      message = "Failed to create email `deposit_expired` in the \"production\" environment" \
+                " due to a template problem. Please check it out as others may be affected."
+
       expected_payload = {
         username: "Customerio Bot",
         text: message

@@ -18,7 +18,9 @@ def customerio_username
 end
 
 def deliver_warnings(failed_customerio_campaign)
-  message = "Failed to create email `#{failed_customerio_campaign}` in the \"#{customerio_environment}\" environment due to a template problem. Please check it out as others may be affected."
+  message = "Failed to create email `#{failed_customerio_campaign}` in the \"#{customerio_environment}\"" \
+            " environment due to a template problem. Please check it out as others may be affected."
+
   params = {
     username: customerio_username,
     text: message
