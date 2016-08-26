@@ -41,16 +41,8 @@ describe "the sinatra app" do
       params = { event_type: "email_failed", data: { "campaign_name": "deposit_expired" } }
       post_as_json("/", params)
 
-      message = "Failed to create email `deposit_expired` in the \"production\" environment" \
-                " due to a template problem. Please check it out as others may be affected."
-
-      expected_payload = {
-        username: "Customerio Bot",
-        text: message
-      }
-
       expect(last_response.status).to eq(200)
-      expect(Net::HTTP).to have_received(:post_form).with(URI("www.slack.com"), "payload" => expected_payload.to_json)
+      expect(Net::HTTP).to have_received(:post_form)
     end
   end
 end
